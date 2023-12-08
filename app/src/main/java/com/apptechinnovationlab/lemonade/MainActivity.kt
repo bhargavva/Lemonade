@@ -50,29 +50,35 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ImageTextComponent(instruction: String, modifier: Modifier = Modifier) {
+fun ImageTextComponent(modifier: Modifier = Modifier) {
 
-    var tapCount by remember { mutableStateOf(1) }
+    var tapCount by remember { mutableStateOf(0) }
+    val randomNum = (2..4).random()
 
-    var imageResource: Int = when(tapCount){
-        1 -> R.drawable.lemon_tree
-        in 2..4 -> R.drawable.lemon_squeeze
-        5 -> R.drawable.lemon_drink
-        6 -> R.drawable.lemon_restart
-        else -> {
-            tapCount = 1
-            R.drawable.lemon_tree
+    var imageResource: Int
+    var stringResource: Int
+
+    when(tapCount){
+        0 -> {
+            imageResource = R.drawable.lemon_tree
+            stringResource = R.string.Instruction_1
         }
-    }
-
-    var stringResource: Int = when(tapCount){
-        1 -> R.string.tap_lemon_tree
-        in 2..4 -> R.string.tap_lemon_label
-        5 -> R.string.glass_of_lemonade
-        6 -> R.string.tap_empty_glass_label
+        1 -> {
+            imageResource = R.drawable.lemon_squeeze
+            stringResource = R.string.Instruction_2
+        }
+        (2..4).random() -> {
+            imageResource = R.drawable.lemon_drink
+            stringResource = R.string.Instruction_3
+        }
+        randomNum + 1 -> {
+            imageResource = R.drawable.lemon_restart
+            stringResource = R.string.Instruction_4
+        }
         else -> {
-            tapCount = 1
-            R.string.tap_lemon_tree
+            tapCount = 0
+            imageResource = R.drawable.lemon_tree
+            stringResource = R.string.Instruction_1
         }
     }
 
@@ -88,15 +94,12 @@ fun ImageTextComponent(instruction: String, modifier: Modifier = Modifier) {
         ) {
             Image(
                 imageVector = ImageVector.vectorResource(imageResource),
-                contentDescription = stringResource(
-                    id = R.string.lemon_tree
-                )
-                ,
+                contentDescription = stringResource.toString(),
                 modifier = Modifier.padding(18.dp)
             )
         }
         Text(
-            text = "Hello $instruction!",
+            text = stringResource(stringResource),
             fontSize = 18.sp,
             modifier = Modifier.padding(top = 20.dp)
         )
@@ -106,12 +109,9 @@ fun ImageTextComponent(instruction: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun LemonadeApp() {
-    LemonadeTheme {
         ImageTextComponent(
-            stringResource(id = R.string.tap_lemon_tree),
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(align = Alignment.Center)
         )
-    }
 }
